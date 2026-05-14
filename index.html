@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>TURING DUNGEONS * a tale of automata</title>
+<link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=VT323&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+<div id="crt">
+<div id="scanlines"></div>
+
+<!-- ============ TITLE SCREEN ============ -->
+<section id="title" class="screen active">
+  <div class="title-stars"></div>
+  <h1 class="game-title">TURING<br/>DUNGEONS</h1>
+  <p class="subtitle">* a tale of automata *</p>
+  <div class="heart-cursor">
+    <button id="startBtn" class="ut-btn">[ ENTER THE RUINS ]</button>
+  </div>
+  <p class="credits">v1.0 &mdash; press any key to descend</p>
+</section>
+
+<!-- ============ INTRO / DIALOG ============ -->
+<section id="intro" class="screen">
+  <div class="dialog-box">
+    <div class="face">
+      <div class="pixel-face"></div>
+    </div>
+    <div class="dialog-text" id="introText"></div>
+    <div class="next-arrow">▼</div>
+  </div>
+</section>
+
+<!-- ============ GAME / DUNGEON ============ -->
+<section id="game" class="screen">
+  <header class="hud">
+    <div class="hud-left">
+      <span class="hud-label">DUNGEON</span>
+      <span id="lvlNum" class="hud-value">1</span>
+      <span class="hud-divider">/</span>
+      <span class="hud-value">3</span>
+    </div>
+    <div class="hud-mid">
+      <span id="lvlName" class="hud-name">THE WHISPERING TAPE</span>
+    </div>
+    <div class="hud-right">
+      <span class="hud-label">SOUL</span>
+      <span class="heart">♥</span>
+      <span id="hp" class="hud-value">20</span>
+      <span class="hud-divider">/</span>
+      <span class="hud-value">20</span>
+    </div>
+  </header>
+
+  <div class="dungeon-art">
+    <canvas id="tm" width="900" height="460"></canvas>
+  </div>
+
+  <div class="tape-area">
+    <div class="tape-label">* the tape stretches before you...</div>
+    <div id="tape" class="tape"></div>
+    <div id="stateDisplay" class="state-display">CURRENT STATE: <span id="curState">q0</span></div>
+  </div>
+
+  <div class="prompt-area">
+    <div class="prompt-text" id="promptText">* Speak a string of <b>a</b>'s and <b>b</b>'s.</div>
+    <div class="input-row">
+      <span class="prompt-caret">&gt;</span>
+      <input id="strInput" type="text" maxlength="20" autocomplete="off" spellcheck="false" />
+      <button id="runBtn" class="ut-btn small">RUN</button>
+    </div>
+    <div class="hint" id="hint">* hint: try something simple first.</div>
+  </div>
+
+  <div class="msg-overlay" id="msgOverlay">
+    <div class="msg-box">
+      <div id="msgText"></div>
+      <button id="msgBtn" class="ut-btn">CONTINUE</button>
+    </div>
+  </div>
+</section>
+
+<!-- ============ WIN / ENDING ============ -->
+<section id="ending" class="screen">
+  <canvas id="endCanvas"></canvas>
+  <div class="end-overlay">
+    <h1 class="end-title">YOU ARE * COMPUTABLE *</h1>
+    <p class="end-sub">the dungeons accept you.</p>
+    <p class="end-credit">~ thanks for playing ~</p>
+    <button id="restartBtn" class="ut-btn">[ AGAIN ]</button>
+  </div>
+</section>
+
+</div>
+
+<script src="game.js"></script>
+</body>
+</html>
