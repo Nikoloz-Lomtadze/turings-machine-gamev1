@@ -6,8 +6,11 @@
 <title>TURING DUNGEONS * a tale of automata</title>
 <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=VT323&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="style.css" />
+<!-- Brython runtime: the only JS we ship. Game logic lives in game.py. -->
+<script src="https://cdn.jsdelivr.net/npm/brython@3.12.4/brython.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/brython@3.12.4/brython_stdlib.js"></script>
 </head>
-<body>
+<body onload="brython()">
 
 <div id="crt">
 <div id="scanlines"></div>
@@ -86,7 +89,11 @@
 <!-- ============ WIN / ENDING ============ -->
 <section id="ending" class="screen">
   <canvas id="endCanvas"></canvas>
-  <div class="end-overlay">
+  <div class="end-dialog" id="endDialog">
+    <div class="end-dialog-text" id="endDialogText"></div>
+    <div class="next-arrow">▼</div>
+  </div>
+  <div class="end-overlay hidden">
     <h1 class="end-title">YOU ARE * COMPUTABLE *</h1>
     <p class="end-sub">the dungeons accept you.</p>
     <p class="end-credit">~ thanks for playing ~</p>
@@ -96,6 +103,6 @@
 
 </div>
 
-<script src="game.js"></script>
+<script type="text/python" src="game.py"></script>
 </body>
 </html>

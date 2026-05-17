@@ -588,15 +588,36 @@ async function runInput() {
 }
 
 async function animateRun(lvl, trace) {
-  const baseDelay = Math.max(180, 520 - trace.length * 8);
-  for (let i = 0; i < trace.length; i++) {
+  // show starting configuration first
+  drawTM(getCanvas(), lvl, trace[0].state, null);
+  renderTape(trace[0].tape, trace[0].head);
+  document.getElementById('curState').textContent = trace[0].state;
+  await sleep(750);
+
+  // two-phase per step: highlight transition on old state, then move to new state
+  // slower than before so the head/state changes are easy to follow
+  const stepTotal = Math.max(340, 1100 - trace.length * 11);
+  const readPhase = Math.floor(stepTotal * 0.45);
+  const writePhase = stepTotal - readPhase;
+
+  for (let i = 1; i < trace.length; i++) {
     const step = trace[i];
+
+    // phase A: still on the source state, but glow the chosen edge
+    drawTM(getCanvas(), lvl, step.edge.from, step.edge);
+    audio.step();
+    await sleep(readPhase);
+
+    // phase B: cell is written, head moves, state changes
     drawTM(getCanvas(), lvl, step.state, step.edge);
     renderTape(step.tape, step.head);
     document.getElementById('curState').textContent = step.state;
-    if (step.edge) audio.step();
-    await sleep(baseDelay);
+    audio.write();
+    await sleep(writePhase);
   }
+
+  // brief pause on the final configuration so the player can read it
+  await sleep(500);
 }
 
 function flashCanvas(color) {
@@ -623,16 +644,69 @@ function showMsg(text, type, onContinue) {
 }
 
 /* ----- ENDING -------------------------------------------------------- */
+const FW_COLORS = ['#ff2244','#ffcc44','#aa00ff','#7af','#fff','#6f6','#f6f'];
+
+/* Pixel-art Alan Turing portrait (14w x 18h)
+   . = transparent  h = hair  s = skin  b = eye  p = nose
+   m = mouth  w = shirt  j = jacket  t = tie */
+const TURING_SPRITE = [
+  "....hhhhhh....",
+  "...hhhhhhhh...",
+  "..hhhhhhhhhh..",
+  ".hhhhhhhhhhhh.",
+  ".hssssssssshh.",
+  ".ssssssssssss.",
+  ".ssbssssssbss.",
+  ".ssssssssssss.",
+  ".ssssppppssss.",
+  ".ssssssssssss.",
+  ".sssmmmmmmsss.",
+  ".ssssssssssss.",
+  "..ssssssssss..",
+  "...wwwwwwww...",
+  "..jjwwwwwwjj..",
+  ".jjjwttttwjjj.",
+  "jjjjwttttwjjjj",
+  "jjjjwttttwjjjj",
+];
+const TURING_COLORS = {
+  h: '#4a3020',
+  s: '#f0c8a0',
+  b: '#1a1a1a',
+  p: '#d8a880',
+  m: '#8a3030',
+  w: '#e8e8e0',
+  j: '#1c2030',
+  t: '#aa2030',
+};
+
+const TURING_LINES = [
+  "* The void hums softly.",
+  "* A figure steps out of the static.",
+  "* It is ALAN TURING.",
+  "* ...",
+  '* "so. you walked the dungeons."',
+  '* "you balanced the a\'s and the b\'s."',
+  '* "you tamed the triple bind."',
+  '* "the tape will remember you."',
+  '* "stay determined, dear computer."',
+  "* TURING smiles, and fades into pixels.",
+];
+
 function showEnding() {
   show('ending');
-  audio.win();
-  animateEnding();
+  document.querySelector('.end-overlay').classList.add('hidden');
+  document.getElementById('endDialog').classList.remove('active');
+  document.getElementById('endDialogText').innerHTML = '';
+  runTuringEnding();
 }
 
-let endingStarted = false;
-function animateEnding() {
-  if (endingStarted) return;
-  endingStarted = true;
+let endingTask = null;
+
+async function runTuringEnding() {
+  if (endingTask) endingTask.cancelled = true;
+  const task = { cancelled: false };
+  endingTask = task;
 
   const canvas = document.getElementById('endCanvas');
   const ctx = canvas.getContext('2d');
@@ -643,60 +717,199 @@ function animateEnding() {
   resize();
   window.addEventListener('resize', resize);
 
-  const colors = ['#ff2244','#ffcc44','#aa00ff','#7af','#fff','#6f6','#f6f'];
-  const particles = [];
-  for (let i = 0; i < 140; i++) {
-    particles.push(makeParticle(canvas, colors, true));
-  }
-  // burst
-  for (let i = 0; i < 60; i++) {
-    const p = makeParticle(canvas, colors, false);
-    p.x = canvas.width/2; p.y = canvas.height/2;
-    const a = Math.random()*Math.PI*2;
-    const s = 2 + Math.random()*7;
-    p.vx = Math.cos(a)*s; p.vy = Math.sin(a)*s;
-    particles.push(p);
-  }
+  const starSeed = Math.random() * 1000;
+  const state = {
+    phase: 'turing',
+    turingAlpha: 0,
+    flicker: 0,
+    particles: [],
+    frame: 0,
+  };
 
-  let frame = 0;
-  function tick() {
-    frame++;
-    ctx.fillStyle = 'rgba(0,0,0,0.12)';
-    ctx.fillRect(0, 0, canvas.width, canvas.height);
+  function loop() {
+    if (task.cancelled) return;
+    state.frame++;
+    const W = canvas.width, H = canvas.height;
 
-    // glowing center heart
-    if (frame % 4 === 0) {
-      for (let i = 0; i < 3; i++) {
-        const p = makeParticle(canvas, colors, false);
-        p.x = canvas.width/2; p.y = canvas.height/2;
-        const a = Math.random()*Math.PI*2;
-        const s = 1 + Math.random()*4;
-        p.vx = Math.cos(a)*s; p.vy = Math.sin(a)*s;
-        particles.push(p);
+    if (state.phase !== 'fireworks') {
+      // dark void with subtle starfield and soft purple glow behind Turing
+      ctx.fillStyle = '#000';
+      ctx.fillRect(0, 0, W, H);
+      drawStarfield(ctx, W, H, state.frame, starSeed);
+
+      const cx = W / 2;
+      const cy = H / 2 - H * 0.08;
+      drawCharGlow(ctx, cx, cy, Math.max(W, H) * 0.45, state.turingAlpha);
+
+      const pixelSize = Math.max(8, Math.floor(Math.min(W, H) / 28));
+      // tiny flicker / sway for life
+      const sway = Math.sin(state.frame * 0.04) * 1.5;
+      const flickerAlpha = state.turingAlpha * (0.92 + Math.sin(state.frame * 0.6) * 0.04 + Math.random() * 0.04);
+      drawTuringSprite(ctx, cx + sway, cy, pixelSize, flickerAlpha);
+    } else {
+      ctx.fillStyle = 'rgba(0,0,0,0.12)';
+      ctx.fillRect(0, 0, W, H);
+
+      if (state.frame % 4 === 0) {
+        for (let i = 0; i < 3; i++) {
+          const p = makeParticle(canvas, FW_COLORS, false);
+          p.x = W / 2; p.y = H / 2;
+          const a = Math.random() * Math.PI * 2;
+          const s = 1 + Math.random() * 4;
+          p.vx = Math.cos(a) * s; p.vy = Math.sin(a) * s;
+          state.particles.push(p);
+        }
       }
+
+      for (let i = state.particles.length - 1; i >= 0; i--) {
+        const p = state.particles[i];
+        p.x += p.vx; p.y += p.vy;
+        p.vy += p.gravity;
+        p.life -= 0.008;
+        ctx.fillStyle = p.color;
+        ctx.globalAlpha = Math.max(0, Math.min(1, p.life));
+        ctx.fillRect(p.x, p.y, p.size, p.size);
+        ctx.globalAlpha = 1;
+        if (p.life <= 0 || p.y > H + 20) state.particles.splice(i, 1);
+      }
+      while (state.particles.length < 140) state.particles.push(makeParticle(canvas, FW_COLORS, true));
+
+      const pulse = 30 + Math.sin(state.frame * 0.08) * 8;
+      drawPixelHeart(ctx, W / 2, H / 2, pulse, '#ff2244');
     }
 
-    for (let i = particles.length - 1; i >= 0; i--) {
-      const p = particles[i];
-      p.x += p.vx; p.y += p.vy;
-      p.vy += p.gravity;
-      p.life -= 0.008;
-      ctx.fillStyle = p.color;
-      ctx.globalAlpha = Math.max(0, Math.min(1, p.life));
-      ctx.fillRect(p.x, p.y, p.size, p.size);
-      ctx.globalAlpha = 1;
-      if (p.life <= 0 || p.y > canvas.height + 20) particles.splice(i, 1);
-    }
-    // top up
-    while (particles.length < 140) particles.push(makeParticle(canvas, colors, true));
-
-    // central pulsing heart
-    const pulse = 30 + Math.sin(frame * 0.08) * 8;
-    drawPixelHeart(ctx, canvas.width/2, canvas.height/2, pulse, '#ff2244');
-
-    requestAnimationFrame(tick);
+    requestAnimationFrame(loop);
   }
-  tick();
+  loop();
+
+  // -- sequence --
+  await sleep(700);
+  if (task.cancelled) return;
+
+  // fade Turing in
+  audio.beep(523, 0.5, 'sine', 0.05);
+  await tween(0, 1, 900, v => { state.turingAlpha = v; }, task);
+  if (task.cancelled) return;
+  await sleep(500);
+  if (task.cancelled) return;
+
+  // play dialog
+  document.getElementById('endDialog').classList.add('active');
+  const dialogText = document.getElementById('endDialogText');
+  for (const line of TURING_LINES) {
+    if (task.cancelled) return;
+    await typeText(dialogText, line, 42);
+    if (task.cancelled) return;
+    await waitOrAdvance(1400, task);
+  }
+  document.getElementById('endDialog').classList.remove('active');
+  if (task.cancelled) return;
+
+  // dissolve Turing into pixels
+  audio.beep(330, 0.4, 'triangle', 0.04);
+  await tween(1, 0, 900, v => { state.turingAlpha = v; }, task);
+  if (task.cancelled) return;
+  await sleep(300);
+
+  // burst into the celebratory fireworks ending
+  audio.win();
+  state.phase = 'fireworks';
+  for (let i = 0; i < 140; i++) state.particles.push(makeParticle(canvas, FW_COLORS, true));
+  for (let i = 0; i < 60; i++) {
+    const p = makeParticle(canvas, FW_COLORS, false);
+    p.x = canvas.width / 2; p.y = canvas.height / 2;
+    const a = Math.random() * Math.PI * 2;
+    const s = 2 + Math.random() * 7;
+    p.vx = Math.cos(a) * s; p.vy = Math.sin(a) * s;
+    state.particles.push(p);
+  }
+
+  await sleep(450);
+  document.querySelector('.end-overlay').classList.remove('hidden');
+}
+
+function waitOrAdvance(ms, task) {
+  return new Promise(resolve => {
+    let done = false;
+    function finish() {
+      if (done) return;
+      done = true;
+      clearTimeout(timer);
+      document.removeEventListener('click', finish);
+      document.removeEventListener('keydown', onKey);
+      resolve();
+    }
+    function onKey(e) {
+      if (e.key === ' ' || e.key === 'Enter' || e.key === 'z' || e.key === 'x') finish();
+    }
+    const timer = setTimeout(finish, ms);
+    document.addEventListener('click', finish);
+    document.addEventListener('keydown', onKey);
+    if (task) {
+      const iv = setInterval(() => {
+        if (task.cancelled) { clearInterval(iv); finish(); }
+      }, 80);
+    }
+  });
+}
+
+function tween(from, to, duration, onUpdate, task) {
+  return new Promise(resolve => {
+    const start = performance.now();
+    function frame() {
+      if (task && task.cancelled) { resolve(); return; }
+      const t = Math.min(1, (performance.now() - start) / duration);
+      const eased = t < 0.5 ? 2 * t * t : 1 - Math.pow(-2 * t + 2, 2) / 2;
+      onUpdate(from + (to - from) * eased);
+      if (t < 1) requestAnimationFrame(frame);
+      else resolve();
+    }
+    requestAnimationFrame(frame);
+  });
+}
+
+function drawTuringSprite(ctx, cx, cy, px, alpha) {
+  if (alpha <= 0) return;
+  const w = TURING_SPRITE[0].length;
+  const h = TURING_SPRITE.length;
+  const startX = Math.floor(cx - (w * px) / 2);
+  const startY = Math.floor(cy - (h * px) / 2);
+  ctx.save();
+  ctx.globalAlpha = Math.max(0, Math.min(1, alpha));
+  for (let r = 0; r < h; r++) {
+    for (let c = 0; c < w; c++) {
+      const ch = TURING_SPRITE[r][c];
+      if (ch === '.') continue;
+      ctx.fillStyle = TURING_COLORS[ch] || '#fff';
+      ctx.fillRect(startX + c * px, startY + r * px, px + 1, px + 1);
+    }
+  }
+  ctx.restore();
+}
+
+function drawStarfield(ctx, W, H, frame, seed) {
+  ctx.save();
+  for (let i = 0; i < 70; i++) {
+    const x = (i * 53.7 + seed) % W;
+    const y = (i * 91.3 + seed * 0.3) % H;
+    const tw = (Math.sin(frame * 0.02 + i * 0.7) + 1) * 0.5;
+    ctx.globalAlpha = 0.15 + tw * 0.45;
+    ctx.fillStyle = i % 7 === 0 ? '#aef' : (i % 11 === 0 ? '#ffd' : '#fff');
+    ctx.fillRect(x, y, 1.5, 1.5);
+  }
+  ctx.restore();
+}
+
+function drawCharGlow(ctx, cx, cy, radius, alpha) {
+  if (alpha <= 0) return;
+  const grad = ctx.createRadialGradient(cx, cy, 10, cx, cy, radius);
+  grad.addColorStop(0, `rgba(120, 80, 200, ${0.28 * alpha})`);
+  grad.addColorStop(0.4, `rgba(60, 30, 120, ${0.14 * alpha})`);
+  grad.addColorStop(1, 'rgba(0, 0, 0, 0)');
+  ctx.save();
+  ctx.fillStyle = grad;
+  ctx.fillRect(0, 0, ctx.canvas.width, ctx.canvas.height);
+  ctx.restore();
 }
 
 function makeParticle(canvas, colors, scattered) {
@@ -753,7 +966,7 @@ document.addEventListener('DOMContentLoaded', () => {
     if (e.key === 'Enter') { e.preventDefault(); runInput(); }
   });
   document.getElementById('restartBtn').addEventListener('click', () => {
-    endingStarted = false;
+    if (endingTask) endingTask.cancelled = true;
     State.level = 0;
     showIntro(0);
   });
