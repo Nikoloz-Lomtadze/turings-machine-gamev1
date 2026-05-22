@@ -77,14 +77,14 @@ sound = Sound()
 
 LEVELS = [
     {
-        'name': "THE WHISPERING TAPE",
-        'intro': ("* You step into the first dungeon.\n"
-                  "* Damp stone, a chalk diagram on the wall.\n"
-                  "* A voice whispers:\n"
-                  "*   <b>\"speak a word containing 'ab'...</b>\n"
-                  "*   <b>or perish on the tape.\"</b>"),
-        'prompt': "* Speak a word of <b>a</b>'s and <b>b</b>'s &mdash; it must contain <b>ab</b>.",
-        'hint': "* hint: try <b>ab</b>, <b>bbab</b>, or <b>babab</b>.",
+        'name': "პირველი დავალება",
+        'intro': ("* თქვენ შეაბიჯეთ A212 აუდიტორიაში.\n"
+                  "* დაფაზე დახაზულია ტურინგის მანქანის დიაგრამები\n"
+                  "* ლექტორი გავალებთ:\n"
+                  "*   <b>\"ჩაწერე სიტყვა რომელიც შეიცავს 'ab'-ს...</b>\n"
+                  "*   <b>ან დარჩით აუდიტორიაში სამუდამოდ.\"</b>"),
+        'prompt': "* წარმოთქვით სიტყვა რომელიც შეიცავს <b>a</b>'s და <b>b</b> &mdash; აუცილებლად უნდა შეიცავდეს <b>ab</b>.",
+        'hint': "* მინიშნება: სცადეთ <b>ab</b>, <b>bbab</b>, ან <b>babab</b>.",
         'alphabet': ['a', 'b'],
         'states': {
             'q0': {'x': 180, 'y': 240, 'label': 'q0'},
@@ -112,14 +112,14 @@ LEVELS = [
 
     # a^n b^n - balance n a's against n b's by crossing them off in pairs
     {
-        'name': "THE BALANCED HALL",
-        'intro': ("* The next chamber pulses.\n"
-                  "* A more intricate diagram glows.\n"
-                  "* The voice sharpens:\n"
-                  "*   <b>\"a^n b^n. all a's first.</b>\n"
-                  "*   <b>equal b's. prove your balance.\"</b>"),
-        'prompt': "* Speak <b>a^n b^n</b> &mdash; all a's first, then equal b's.",
-        'hint': "* hint: try <b>ab</b>, <b>aabb</b>, or <b>aaabbb</b>.",
+        'name': "მეორე დავალება",
+        'intro': ("* ჰმმ.. კარგია, წარმატებით შეასრულეთ პირველი დავალება\n"
+                  "* ფიქრის შემდეგ შემოგხედათ.\n"
+                  "* ლექტორი გავალებთ:\n"
+                  "*   <b>\"a^n b^n. უნდა იწყებოდეს 'a' სიმბოლოთი.</b>\n"
+                  "*   <b>იგივე რაოდენობის a და b. დაამტკიცეთ შენი ცოდნა.\"</b>"),
+        'prompt': "* ჩაწერეთ <b>a^n b^n</b> &mdash; ყველა a არის დასაწყისში, შემდეგ იგივე რაოდენობის b",
+        'hint': "* მინიშნება: სცადეთ <b>ab</b>, <b>aabb</b>, ან <b>aaabbb</b>.",
         'alphabet': ['a', 'b'],
         'states': {
             'q0': {'x': 130, 'y': 290, 'label': 'q0'},
@@ -156,14 +156,14 @@ LEVELS = [
 
     # a^n b^n c^n - same trick but in two passes (a->b, then b->c)
     {
-        'name': "THE TRIPLE TOMB",
-        'intro': ("* Final dungeon. the walls breathe.\n"
-                  "* The voice is everywhere:\n"
-                  "*   <b>\"a^n b^n c^n. the triple bind.</b>\n"
-                  "*   <b>not even a pushdown can pass.</b>\n"
-                  "*   <b>but the tape... the tape can.\"</b>"),
-        'prompt': "* Speak <b>a^n b^n c^n</b> &mdash; equal counts of each.",
-        'hint': "* hint: try <b>abc</b>, <b>aabbcc</b>, or <b>aaabbbccc</b>.",
+        'name': "მესამე დავალება",
+        'intro': ("* ყოჩაღ!!\n"
+                  "* ვნახოთ, თუ შეძლებთ ბოლო დავალების შესრულებას!.\n"
+                  "*   <b>\"a^n b^n c^n. გამოიყენეთ სიმბოლოები a,b,c.</b>\n"
+                  "*   <b>ამას ყველა ვერ ამოხსნის,</b>\n"
+                  "*   <b>მაგრამ თქვენ ეს შეგიძლიათ!!\"</b>"),
+        'prompt': "* ჩაწერეთ <b>a^n b^n c^n</b> &mdash; ყველა ერთი რაოდენობით.",
+        'hint': "* მინიშნება: სცადეთ <b>abc</b>, <b>aabbcc</b>, ან <b>aaabbbccc</b>.",
         'alphabet': ['a', 'b', 'c'],
         'states': {
             'q0': {'x':  90, 'y': 300, 'label': 'q0'},
@@ -670,9 +670,9 @@ async def run_input():
         flash('#6f6')
 
         is_last = game['level'] == len(LEVELS) - 1
-        msg = ('* THE FINAL TAPE ACCEPTS YOU.\n* the dungeon dissolves...'
+        msg = ('* ლექტორი თქვენით კმაყოფილია\n* თქვენ დატოვეთ აუდიტორია...'
                if is_last
-               else '* THE TAPE ACCEPTS YOU.\n* you feel determined.')
+               else '* ლექტორი თქვენით კმაყოფილია.\n* თქვენ ხართ მოტივირებული.')
 
         def then():
             if is_last:
@@ -687,12 +687,12 @@ async def run_input():
         art.classList.add('shake')
         timer.set_timeout(lambda: art.classList.remove('shake'), 600)
 
-        msg = '* the string is REJECTED.'
+        msg = '* ტექსტი არაა მიღებული.'
         if result['halt'] == 'left-off-tape':
-            msg += '\n* the head fell off the tape...'
+            msg += '\n* კიდევ იფიქრე'
         elif result['halt'] == 'max-steps':
-            msg += '\n* the head wandered forever...'
-        msg += '\n* try again, brave one.'
+            msg += '\n* ნუ ჩქარობ...'
+        msg += '\n* არაუშავს, სცადეთ კიდევ.'
         show_message(msg, 'bad')
 
     game['running'] = False
@@ -767,54 +767,161 @@ def show_message(text, kind, on_continue=None):
     document.bind('keydown', on_key)
 
 
-# --- the ending: pixel Alan Turing has a word with you ---------------
+# --- the ending: 4 student characters celebrate with you -------------
 FW_COLORS = ['#ff2244', '#ffcc44', '#aa00ff', '#7af', '#fff', '#6f6', '#f6f']
 
-# Hand-drawn 14x18 pixel portrait of Turing.
-#   .=transparent  h=hair  s=skin  b=eye  p=nose
-#   m=mouth        w=shirt  j=jacket  t=tie
-TURING_SPRITE = [
-    "....hhhhhh....",
-    "...hhhhhhhh...",
-    "..hhhhhhhhhh..",
-    ".hhhhhhhhhhhh.",
-    ".hssssssssshh.",
-    ".ssssssssssss.",
-    ".ssbssssssbss.",
-    ".ssssssssssss.",
-    ".ssssppppssss.",
-    ".ssssssssssss.",
-    ".sssmmmmmmsss.",
-    ".ssssssssssss.",
-    "..ssssssssss..",
-    "...wwwwwwww...",
-    "..jjwwwwwwjj..",
-    ".jjjwttttwjjj.",
-    "jjjjwttttwjjjj",
-    "jjjjwttttwjjjj",
-]
-TURING_PALETTE = {
-    'h': '#4a3020',  # hair
-    's': '#f0c8a0',  # skin
-    'b': '#1a1a1a',  # eye
-    'p': '#d8a880',  # nose shadow
-    'm': '#8a3030',  # mouth
-    'w': '#e8e8e0',  # shirt
-    'j': '#1c2030',  # jacket
-    't': '#aa2030',  # tie
-}
+# -----------------------------------------------------------------------
+# 4 hand-drawn 12x20 pixel student sprites.
+# Legend: .=transparent  s=skin  b=eye  m=mouth  p=nose
+#         [hair letters]  [shirt/clothing letters]
+#
+# BOY  - brown hair, blue shirt
+# GIRL1 - black hair with bangs, pink shirt
+# GIRL2 - curly hair (brown), green shirt
+# GIRL3 - light/blonde hair, purple shirt
+# -----------------------------------------------------------------------
 
-TURING_LINES = [
-    "* The void hums softly.",
-    "* A figure steps out of the static.",
-    "* It is ALAN TURING.",
-    "* ...",
-    '* "so. you walked the dungeons."',
-    '* "you balanced the a\'s and the b\'s."',
-    '* "you tamed the triple bind."',
-    '* "the tape will remember you."',
-    '* "stay determined, dear computer."',
-    "* TURING smiles, and fades into pixels.",
+# Boy: brown hair, blue shirt
+BOY_SPRITE = [
+    "....hhhhhh..",
+    "...hhhhhhhh.",
+    "..hhhhhhhhhh",
+    ".hhssssssshh",
+    ".hsssssssssh",
+    ".ssssssssss.",
+    ".ssbsssssbss",
+    ".ssssssssss.",
+    ".sssppppssss",
+    ".ssssssssss.",
+    ".sssmmmmssss",
+    ".ssssssssss.",
+    "..ssssssss..",
+    "...cccccccc.",
+    "..cccccccccc",
+    ".cccccccccc.",
+    "..cccccccc..",
+    "..llll.rrrr.",
+]
+BOY_PALETTE = {
+    'h': "#421a05",  # brown hair
+    's': '#f4c08a',  # skin
+    'b': '#1a1a1a',  # eye
+    'p': '#dba070',  # nose
+    'm': '#883030',  # mouth
+    'c': "#0a4291",  # blue shirt
+    'l': '#2a2a2a',  # left trouser leg
+    'r': '#2a2a2a',  # right trouser leg
+}
+BOY_NAME = "* Niko"
+
+# Girl 1: black hair with bangs, pink shirt
+GIRL1_SPRITE = [
+    "..hhhhhhhh..",
+    ".hhhhhhhhhh.",
+    "hhhhhhhhhhhh",
+    "hhhhshsshhhh",
+    "hhsssssssshh",
+    "hssssssssssh",
+    "hsssbssssbsh",
+    "hssssssssssh",
+    "hssssppppssh",
+    "hssssssssssh",
+    "hsssmmmmmssh",
+    "hssssssssssh",
+    "hhssssssssh",
+    "hhcccccccc..",
+    ".cccccccccc.",
+    "..cccccccc..",
+    "..ssss.ssss.",
+    "..ssss.ssss.",
+]
+GIRL1_PALETTE = {
+    'h': "#0F0F0F",  # black hair
+    's': '#f4c08a',  # skin
+    'b': '#1a1a1a',  # eye
+    'p': '#dba070',  # nose
+    'm': '#883030',  # mouth
+    'c': "#4b0b28",  # pink shirt
+}
+GIRL1_NAME = "* Dea"
+
+# Girl 2: curly hair (represented with bumpy top row), brown, green shirt
+GIRL2_SPRITE = [
+    ".hh.hh.h.hh.",
+   "hhhhhhhhhhhhhhh",
+   "hhhhhhhhhhhhhhhh",
+   "hhhhsssssssshh",
+   "hhhhsssssssssshh",
+  "hhhsssssssssshh",
+   "hhhssbssssbsssh",
+   "hhhhssssssssssshh",
+    "hhsssppppsssshhh",
+    "hhsssssssssshh",
+    "hsssmmmmssssh",
+    "hhsssssssssshh",
+    ".hssssssssh.",
+    "..cccccccc..",
+    ".cccccccccc.",
+    "..cccccccc..",
+    "..ssss.ssss.",
+    "..ssss.ssss.",
+]
+GIRL2_PALETTE = {
+    'h': '#7a4a20',  # brown curly hair
+    's': '#f4c08a',  # skin
+    'b': "#04254b",  # eye
+    'p': '#dba070',  # nose
+    'm': '#883030',  # mouth
+    'c': "#02421b",  # green shirt
+}
+GIRL2_NAME = "* Nina"
+
+# Girl 3: light/blonde hair, purple shirt
+GIRL3_SPRITE = [
+    "............",
+    "...hhhhhhhh.",
+    "..hhhhhhhhhh",
+    ".hhssssssshh",
+    ".hsssssssssh",
+    "hssssssssssh",
+    "hssbsssssbsh",
+    "hssssssssssh",
+    "hsssppppsssh",
+    "hssssssssssh",
+    "hsssmmmmsssh",
+    "hssssssssssh",
+    "hhsssssssshh",
+    "hhcccccccchh",
+    ".cccccccccch",
+    "..cccccccc..",
+    "..ssss.ssss.",
+    "..ssss.ssss.",
+]
+GIRL3_PALETTE = {
+    'h': "#3F2601",  # blonde/light hair
+    's': '#f4c08a',  # skin
+    'b': '#1a1a1a',  # eye
+    'p': '#dba070',  # nose
+    'm': '#883030',  # mouth
+    'c': '#8844cc',  # purple shirt
+}
+GIRL3_NAME = "* Maria"
+
+STUDENTS = [
+    (BOY_SPRITE,   BOY_PALETTE,   BOY_NAME),
+    (GIRL1_SPRITE, GIRL1_PALETTE, GIRL1_NAME),
+    (GIRL2_SPRITE, GIRL2_PALETTE, GIRL2_NAME),
+    (GIRL3_SPRITE, GIRL3_PALETTE, GIRL3_NAME),
+]
+
+STUDENT_LINES = [
+    "* ოთახი აივსო თბილი განათებით",
+    "* ოთხი სტუდენტი შემოდის აუდიტორიაში.",
+    "* ნიკო ამბობს. \"შენ ეს მართლაც შეძელით!!\"",
+    "* დეას უხარია. \"წარმატებით შეასრულეთ დავალებები!!\"",
+    "* ნინა ამაყობს. \"იდეალურად ჩაწერეთ სიტყვები!!\"",
+    "* მარია ამბობს. \"ასე გააგრძელეთ, არ დანებდეთ!\"",
+    "* მათ ხელი დაგიქნიეს და გაქრნენ ფიკსელებად.",
 ]
 
 
@@ -863,22 +970,21 @@ def _draw_heart(ctx, cx, cy, size, color):
     ctx.restore()
 
 
-def _draw_turing(ctx, cx, cy, pixel, alpha):
+def _draw_student(ctx, sprite, palette, cx, cy, pixel, alpha):
+    """Draw a single pixel student sprite centred at (cx, cy)."""
     if alpha <= 0:
         return
-    cols = len(TURING_SPRITE[0])
-    rows = len(TURING_SPRITE)
+    cols = len(sprite[0])
+    rows = len(sprite)
     start_x = math.floor(cx - (cols * pixel) / 2)
     start_y = math.floor(cy - (rows * pixel) / 2)
-
     ctx.save()
     ctx.globalAlpha = max(0, min(1, alpha))
-    for r, line in enumerate(TURING_SPRITE):
+    for r, line in enumerate(sprite):
         for c, ch in enumerate(line):
             if ch == '.':
                 continue
-            ctx.fillStyle = TURING_PALETTE.get(ch, '#fff')
-            # +1 prevents thin gaps between pixels at fractional sizes
+            ctx.fillStyle = palette.get(ch, '#fff')
             ctx.fillRect(start_x + c * pixel, start_y + r * pixel, pixel + 1, pixel + 1)
     ctx.restore()
 
@@ -958,10 +1064,10 @@ def show_ending():
     document.select('.end-overlay')[0].classList.add('hidden')
     document['endDialog'].classList.remove('active')
     document['endDialogText'].innerHTML = ''
-    aio.run(_run_turing_scene())
+    aio.run(_run_students_scene())
 
 
-async def _run_turing_scene():
+async def _run_students_scene():
     # cancel any previous ending that's still running (e.g. mid-restart)
     global ending_task
     ending_task.cancelled = True
@@ -980,10 +1086,11 @@ async def _run_turing_scene():
 
     # shared state for the render loop and the sequence below
     scene = {
-        'phase': 'turing',     # 'turing' or 'fireworks'
-        'alpha': 0.0,           # how visible Turing is
+        'phase': 'students',   # 'students' or 'fireworks'
+        'alpha': 0.0,          # how visible the students are
         'frame': 0,
         'particles': [],
+        'highlight': -1,       # which student (0-3) to subtly highlight, -1=all
     }
     star_seed = random.random() * 1000
 
@@ -993,8 +1100,8 @@ async def _run_turing_scene():
         scene['frame'] += 1
         W, H = canvas.width, canvas.height
 
-        if scene['phase'] == 'turing':
-            _render_turing_phase(ctx, W, H, scene, star_seed)
+        if scene['phase'] == 'students':
+            _render_students_phase(ctx, W, H, scene, star_seed)
         else:
             _render_fireworks_phase(ctx, W, H, scene, canvas)
 
@@ -1006,24 +1113,27 @@ async def _run_turing_scene():
     await aio.sleep(0.7)
     if task.cancelled: return
 
-    sound.play(523, 0.5, 'sine', 0.05)  # soft "he appears" tone
+    sound.play(523, 0.5, 'sine', 0.05)  # soft "they appear" tone
     await _tween(0, 1, 900, lambda v: scene.__setitem__('alpha', v), task)
     if task.cancelled: return
     await aio.sleep(0.5)
     if task.cancelled: return
 
-    # dialog
+    # dialog — highlight each student in turn on lines 2-5
     document['endDialog'].classList.add('active')
     dialog = document['endDialogText']
-    for line in TURING_LINES:
+    highlight_map = {2: 0, 3: 1, 4: 2, 5: 3}  # line index -> student index
+    for i, line in enumerate(STUDENT_LINES):
         if task.cancelled: return
+        scene['highlight'] = highlight_map.get(i, -1)
         await type_text(dialog, line, speed_ms=42)
         if task.cancelled: return
         await _wait_or_skip(1400, task)
+    scene['highlight'] = -1
     document['endDialog'].classList.remove('active')
     if task.cancelled: return
 
-    # Turing dissolves
+    # students dissolve
     sound.play(330, 0.4, 'triangle', 0.04)
     await _tween(1, 0, 900, lambda v: scene.__setitem__('alpha', v), task)
     if task.cancelled: return
@@ -1047,21 +1157,42 @@ async def _run_turing_scene():
     document.select('.end-overlay')[0].classList.remove('hidden')
 
 
-def _render_turing_phase(ctx, W, H, scene, star_seed):
+def _render_students_phase(ctx, W, H, scene, star_seed):
     ctx.fillStyle = '#000'
     ctx.fillRect(0, 0, W, H)
     _draw_stars(ctx, W, H, scene['frame'], star_seed)
 
-    cx = W / 2
-    cy = H / 2 - H * 0.08
-    _draw_glow(ctx, cx, cy, max(W, H) * 0.45, scene['alpha'])
+    # 4 students side by side, centred vertically
+    count = len(STUDENTS)
+    # Fit all 4 sprites (12px wide each) + gaps within 92% of canvas width.
+    # Available width per slot = W*0.92 / count; pixel = slot / (12 + gap_ratio).
+    pixel = max(4, min(math.floor(W * 0.92 / (count * 18)), math.floor(H / 30)))
+    sprite_w = 12 * pixel
+    gap = max(4, math.floor(pixel * 6))
+    total_w = count * sprite_w + (count - 1) * gap
+    start_cx = W / 2 - total_w / 2 + sprite_w / 2
 
-    pixel = max(8, math.floor(min(W, H) / 28))
-    sway = math.sin(scene['frame'] * 0.04) * 1.5  # gentle "he's breathing"
-    flicker = scene['alpha'] * (0.92
-                                + math.sin(scene['frame'] * 0.6) * 0.04
-                                + random.random() * 0.04)
-    _draw_turing(ctx, cx + sway, cy, pixel, flicker)
+    cy = H / 2 - H * 0.06
+
+    for i, (sprite, palette, _name) in enumerate(STUDENTS):
+        cx = start_cx + i * (sprite_w + gap)
+        # gentle independent bounce so they feel alive
+        bounce = math.sin(scene['frame'] * 0.05 + i * 1.1) * 2.5
+
+        # if one is highlighted, dim the others slightly
+        if scene['highlight'] == -1:
+            a = scene['alpha']
+        elif scene['highlight'] == i:
+            a = scene['alpha']
+        else:
+            a = scene['alpha'] * 0.45
+
+        flicker = a * (0.92
+                       + math.sin(scene['frame'] * 0.5 + i * 0.8) * 0.04
+                       + random.random() * 0.04)
+
+        _draw_glow(ctx, cx, cy + bounce, max(W, H) * 0.22, a * 0.7)
+        _draw_student(ctx, sprite, palette, cx, cy + bounce, pixel, flicker)
 
 
 def _render_fireworks_phase(ctx, W, H, scene, canvas):
