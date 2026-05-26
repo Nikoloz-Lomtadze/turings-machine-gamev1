@@ -847,35 +847,27 @@ GIRL1_NAME = "* Dea"
 
 # Girl 2: curly hair (represented with bumpy top row), brown, green shirt
 GIRL2_SPRITE = [
-    "h...hhhh...h....",
-    "hh.hhhhhhhh.hh..",
-    "hhhhhhhhhhhhhhhhh",
-    "hhhhhhhhhhhhhhhh.",
-    ".hhhhhhhhhhhhhh..",
-    "..hhhhhhhhhhhh...",
-    "..hh.hhhhhh.hh..",
-    "...hh.hhhh.hh...",
-    "h.hh..hh..hh.....",
-    "hhhhhhhhhhhhhhh..",
-    "hhhhhhhhhhhhh....",
-    ".hhssssssshh.....",
-    ".hsssssssssh.....",
-    ".ssssssssss......",
-    ".ssbsssssbss.....",
-    ".ssssssssss......",
-    ".sssppppssss.....",
-    ".ssssssssss......",
-    ".sssmmmmssss.....",
-    ".ssssssssss......",
-    "..ssssssss.......",
-    "..cccccccc.......",
-    ".cccccccccc......",
-    "..cccccccc.......",
-    "..ssss.ssss......",
-    "..ssss.ssss......",
+     ".hh..hh..hh.",
+   "hhhhhhhhhhhh",
+    "hhhhhhhhhhhh",
+    "hhhssssssshhh",
+    "hhhhssssshhhhh",
+   "hhssssssssshh",
+    "hhssbsssssbshh",
+   "hhhsssssssshh",
+    "hhsssppppsshhh",
+    "hhssssssssshh",
+    "hsssmmmmsssh",
+    "hhssssssssshh",
+    "..ssssssss..",
+    "..cccccccc..",
+    ".cccccccccc.",
+    "..cccccccc..",
+    "..ssss.ssss.",
+    "..ssss.ssss."
 ]
 GIRL2_PALETTE = {
-    'h': '#7a4a20',  # brown curly hair
+    'h': "#543215",  # brown curly hair
     's': '#f4c08a',  # skin
     'b': "#04254b",  # eye
     'p': '#dba070',  # nose
