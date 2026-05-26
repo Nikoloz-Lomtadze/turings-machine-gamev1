@@ -81,7 +81,7 @@ LEVELS = [
         'intro': ("* თქვენ შეაბიჯეთ A212 აუდიტორიაში.\n"
                   "* დაფაზე დახაზულია ტურინგის მანქანის დიაგრამები\n"
                   "* ლექტორი გავალებთ:\n"
-                  "*   <b>\"ჩაწერე სიტყვა რომელიც შეიცავს 'ab'-ს...</b>\n"
+                  "*   <b>\"ჩაწერეთ სიტყვა, რომელიც შეიცავს 'ab'-ს...</b>\n"
                   "*   <b>ან დარჩით აუდიტორიაში სამუდამოდ.\"</b>"),
         'prompt': "* წარმოთქვით სიტყვა, რომელიც შეიცავს <b>a</b>'ს და <b>b</b>'ს &mdash; აუცილებლად უნდა შეიცავდეს <b>ab</b>.",
         'hint': "* მინიშნება: სცადეთ <b>ab</b>, <b>bbab</b>, ან <b>babab</b>.",
@@ -113,12 +113,12 @@ LEVELS = [
     # a^n b^n - balance n a's against n b's by crossing them off in pairs
     {
         'name': "მეორე დავალება",
-        'intro': ("* ჰმმ.. კარგია, წარმატებით შეასრულეთ პირველი დავალება\n"
+        'intro': ("* ჰმმ.. კარგია, წარმატებით შეასრულეთ პირველი დავალება.\n"
                   "* ფიქრის შემდეგ შემოგხედათ.\n"
                   "* ლექტორი გავალებთ:\n"
                   "*   <b>\"a^n b^n. უნდა იწყებოდეს 'a' სიმბოლოთი.</b>\n"
-                  "*   <b>იგივე რაოდენობის a და b. დაამტკიცეთ შენი ცოდნა.\"</b>"),
-        'prompt': "* ჩაწერეთ <b>a^n b^n</b> &mdash; ყველა a არის დასაწყისში, შემდეგ იგივე რაოდენობის b",
+                  "*   <b>იმავე რაოდენობის a და b. დაამტკიცეთ თქვენი ცოდნა.\"</b>"),
+        'prompt': "* ჩაწერეთ <b>a^n b^n</b> &mdash; ყველა a არის დასაწყისში, შემდეგ იმავე რაოდენობის b",
         'hint': "* მინიშნება: სცადეთ <b>ab</b>, <b>aabb</b>, ან <b>aaabbb</b>.",
         'alphabet': ['a', 'b'],
         'states': {
@@ -644,7 +644,7 @@ async def run_input():
     word = document['strInput'].value.strip().lower()
 
     if word == '':
-        show_message('* you must speak something.', 'bad')
+        show_message('* რამე უნდა დაწეროთ!!', 'bad')
         sound.reject()
         return
 
@@ -652,7 +652,7 @@ async def run_input():
     for c in word:
         if c not in lvl['alphabet']:
             show_message(
-                f"* '{c}' is not in the alphabet {{{', '.join(lvl['alphabet'])}}}.\n* rejected!",
+                f"* '{c}' არ არის ანბანში {{{', '.join(lvl['alphabet'])}}}.\n* უარყოფილია!",
                 'bad')
             sound.reject()
             return
@@ -689,7 +689,7 @@ async def run_input():
 
         msg = '* ტექსტი არაა მიღებული.'
         if result['halt'] == 'left-off-tape':
-            msg += '\n* კიდევ იფიქრე'
+            msg += '\n* კიდევ იფიქრეთ'
         elif result['halt'] == 'max-steps':
             msg += '\n* ნუ ჩქარობ...'
         msg += '\n* არაუშავს, სცადეთ კიდევ.'
