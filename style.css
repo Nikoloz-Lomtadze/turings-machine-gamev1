@@ -1,0 +1,468 @@
+/* ===== reset / base ===== */
+* { box-sizing: border-box; margin: 0; padding: 0; }
+html, body {
+  height: 100%;
+  background: #000;
+  color: #fff;
+  font-family: 'Press Start 2P', monospace;
+  overflow: hidden;
+  image-rendering: pixelated;
+  -webkit-font-smoothing: none;
+}
+
+/* ===== CRT wrap ===== */
+#crt {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  background: radial-gradient(ellipse at center, #0c0c12 0%, #000 80%);
+}
+#scanlines {
+  pointer-events: none;
+  position: absolute; inset: 0;
+  background: repeating-linear-gradient(
+    to bottom,
+    rgba(255,255,255,0.04) 0px,
+    rgba(255,255,255,0.04) 1px,
+    transparent 1px,
+    transparent 3px
+  );
+  z-index: 20;
+  mix-blend-mode: overlay;
+}
+#crt::after {
+  content: '';
+  pointer-events: none;
+  position: absolute; inset: 0;
+  background: radial-gradient(ellipse at center, transparent 60%, rgba(0,0,0,0.7) 100%);
+  z-index: 19;
+}
+
+/* ===== screens ===== */
+.screen {
+  display: none;
+  position: absolute; inset: 0;
+  padding: 28px;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+.screen.active { display: flex; }
+
+/* ===== TITLE ===== */
+#title { gap: 22px; }
+.title-stars {
+  position: absolute; inset: 0;
+  background-image:
+    radial-gradient(2px 2px at 20% 30%, #fff, transparent),
+    radial-gradient(1px 1px at 70% 20%, #fff, transparent),
+    radial-gradient(1px 1px at 40% 70%, #ffd, transparent),
+    radial-gradient(2px 2px at 80% 60%, #fff, transparent),
+    radial-gradient(1px 1px at 90% 85%, #aef, transparent),
+    radial-gradient(1px 1px at 15% 80%, #fff, transparent),
+    radial-gradient(1px 1px at 55% 45%, #fdb, transparent),
+    radial-gradient(1px 1px at 5% 50%, #fff, transparent);
+  animation: twinkle 4s infinite;
+  opacity: 0.8;
+}
+@keyframes twinkle {
+  0%, 100% { opacity: 0.7; }
+  50% { opacity: 1; }
+}
+.game-title {
+  font-size: clamp(28px, 6vw, 64px);
+  letter-spacing: 4px;
+  text-align: center;
+  text-shadow:
+    3px 3px 0 #aa00ff,
+    6px 6px 0 #4400aa,
+    0 0 18px rgba(170,0,255,0.6);
+  animation: float 3s ease-in-out infinite;
+  z-index: 2;
+}
+@keyframes float {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-8px); }
+}
+.subtitle {
+  font-family: 'VT323', monospace;
+  font-size: 22px;
+  color: #ffd;
+  letter-spacing: 2px;
+  z-index: 2;
+}
+.credits {
+  position: absolute; bottom: 28px;
+  font-family: 'VT323', monospace;
+  font-size: 16px;
+  color: #777;
+  z-index: 2;
+}
+.heart-cursor {
+  position: relative;
+  z-index: 2;
+  display: flex;
+  align-items: center;
+  margin-top: 18px;
+}
+.heart-cursor::before {
+  content: '♥';
+  color: #ff2244;
+  font-size: 24px;
+  margin-right: 14px;
+  animation: pulse 1s infinite;
+  text-shadow: 0 0 6px #ff2244;
+}
+@keyframes pulse {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.2); }
+}
+
+/* ===== buttons ===== */
+.ut-btn {
+  font-family: 'Press Start 2P', monospace;
+  background: #000;
+  color: #fff;
+  border: 3px solid #fff;
+  padding: 12px 18px;
+  font-size: 14px;
+  cursor: pointer;
+  letter-spacing: 2px;
+  transition: all 0.1s;
+  text-shadow: 1px 1px 0 #000;
+}
+.ut-btn:hover {
+  background: #fff;
+  color: #000;
+  box-shadow: 0 0 10px #fff;
+}
+.ut-btn.small { padding: 8px 14px; font-size: 11px; border-width: 2px; }
+.ut-btn:active { transform: translate(2px, 2px); }
+
+/* ===== INTRO dialog ===== */
+#intro { padding: 60px; }
+.dialog-box {
+  display: flex;
+  align-items: flex-start;
+  gap: 22px;
+  width: min(820px, 92%);
+  background: #000;
+  border: 4px solid #fff;
+  padding: 26px;
+  box-shadow: 0 0 0 6px #000, 0 0 0 9px #fff;
+}
+.face {
+  width: 88px; height: 88px;
+  flex-shrink: 0;
+  border: 2px solid #fff;
+  background: #111;
+  position: relative;
+}
+.pixel-face {
+  position: absolute; inset: 8px;
+  background-image:
+    /* eyes */
+    linear-gradient(#fff, #fff),
+    linear-gradient(#fff, #fff),
+    /* mouth */
+    linear-gradient(#fff, #fff);
+  background-repeat: no-repeat;
+  background-size: 12px 12px, 12px 12px, 36px 6px;
+  background-position: 12px 20px, 48px 20px, 18px 50px;
+  animation: blink 4s infinite;
+}
+@keyframes blink {
+  0%, 92%, 100% { background-size: 12px 12px, 12px 12px, 36px 6px; }
+  94%, 98% { background-size: 12px 2px, 12px 2px, 36px 6px; }
+}
+.dialog-text {
+  flex: 1;
+  font-family: 'VT323', monospace;
+  font-size: 26px;
+  line-height: 1.4;
+  color: #fff;
+  min-height: 90px;
+  white-space: pre-wrap;
+}
+.dialog-text b { color: #ffcc44; }
+.next-arrow {
+  font-family: monospace;
+  color: #fff;
+  align-self: flex-end;
+  animation: bob 0.8s infinite;
+}
+@keyframes bob {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(4px); }
+}
+
+/* ===== GAME / HUD ===== */
+#game {
+  justify-content: flex-start;
+  padding: 10px;
+  gap: 8px;
+  height: 100%;
+  min-height: 0;
+}
+.hud {
+  flex: 0 0 auto;
+  width: 100%;
+  max-width: 1100px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 10px;
+  padding: 6px 12px;
+  border: 2px solid #fff;
+  background: #000;
+}
+.hud-label { color: #ffcc44; margin-right: 8px; }
+.hud-value { color: #fff; }
+.hud-divider { color: #555; margin: 0 4px; }
+.hud-name {
+  font-family: 'VT323', monospace;
+  font-size: 16px;
+  color: #fff;
+  letter-spacing: 2px;
+}
+.heart { color: #ff2244; margin: 0 4px; text-shadow: 0 0 4px #ff2244; }
+
+/* dungeon / TM canvas */
+.dungeon-art {
+  flex: 1 1 0;
+  min-height: 0;
+  width: 100%;
+  max-width: 1100px;
+  border: 3px solid #fff;
+  background:
+    repeating-linear-gradient(45deg, #0a0a14 0 8px, #0d0d1a 8px 16px);
+  position: relative;
+  box-shadow: 0 0 14px rgba(170,0,255,0.25), inset 0 0 30px rgba(0,0,0,0.7);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+}
+#tm {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+
+/* tape */
+.tape-area {
+  flex: 0 0 auto;
+  width: 100%;
+  max-width: 1100px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+}
+.tape-label {
+  font-family: 'VT323', monospace;
+  font-size: 15px;
+  color: #ffd;
+  align-self: flex-start;
+}
+.tape {
+  display: flex;
+  gap: 2px;
+  padding: 6px;
+  border: 2px solid #fff;
+  background: #000;
+  overflow-x: auto;
+  width: 100%;
+  justify-content: center;
+}
+.tape-cell {
+  width: 30px; height: 30px;
+  border: 2px solid #555;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 14px;
+  color: #fff;
+  background: #111;
+  position: relative;
+  flex-shrink: 0;
+  transition: all 0.15s;
+}
+.tape-cell.head {
+  border-color: #ffcc44;
+  background: #443300;
+  box-shadow: 0 0 10px #ffcc44;
+  color: #ffee88;
+}
+.tape-cell.head::after {
+  content: '▲';
+  position: absolute; bottom: -18px;
+  color: #ffcc44;
+  font-size: 12px;
+  animation: pulse 0.6s infinite;
+}
+.tape-cell.blank { color: #444; }
+
+.state-display {
+  font-family: 'VT323', monospace;
+  font-size: 15px;
+  color: #aef;
+  margin-top: 12px;
+}
+#curState {
+  color: #ffcc44;
+  font-weight: bold;
+  text-shadow: 0 0 6px #ffcc44;
+}
+
+/* prompt */
+.prompt-area {
+  flex: 0 0 auto;
+  width: 100%;
+  max-width: 1100px;
+  border: 3px solid #fff;
+  background: #000;
+  padding: 8px 14px;
+  font-family: 'VT323', monospace;
+}
+.prompt-text {
+  font-size: 17px;
+  color: #fff;
+  margin-bottom: 6px;
+}
+.prompt-text b { color: #ffcc44; }
+.input-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.prompt-caret { font-size: 20px; color: #ffcc44; }
+#strInput {
+  flex: 1;
+  font-family: 'VT323', monospace;
+  font-size: 20px;
+  background: #000;
+  color: #fff;
+  border: 2px solid #555;
+  padding: 4px 8px;
+  letter-spacing: 4px;
+  outline: none;
+}
+#strInput:focus { border-color: #ffcc44; box-shadow: 0 0 6px #ffcc44; }
+.hint {
+  margin-top: 4px;
+  font-size: 13px;
+  color: #888;
+}
+
+/* message overlay */
+.msg-overlay {
+  display: none;
+  position: absolute; inset: 0;
+  background: rgba(0,0,0,0.85);
+  align-items: center;
+  justify-content: center;
+  z-index: 10;
+}
+.msg-overlay.active { display: flex; }
+.msg-box {
+  border: 3px solid #fff;
+  background: #000;
+  padding: 28px;
+  max-width: 560px;
+  text-align: center;
+  font-family: 'VT323', monospace;
+  font-size: 22px;
+  color: #fff;
+  box-shadow: 0 0 0 6px #000, 0 0 0 9px #fff;
+}
+.msg-box .ut-btn { margin-top: 18px; }
+.msg-good { color: #6f6; text-shadow: 0 0 6px #6f6; }
+.msg-bad { color: #f66; text-shadow: 0 0 6px #f66; }
+
+/* shake */
+@keyframes shake {
+  0%, 100% { transform: translate(0); }
+  25% { transform: translate(-6px, 2px); }
+  50% { transform: translate(6px, -2px); }
+  75% { transform: translate(-3px, 1px); }
+}
+.shake { animation: shake 0.3s 2; }
+
+/* ===== ENDING ===== */
+#ending { background: #000; }
+#endCanvas {
+  position: absolute; inset: 0;
+  width: 100%; height: 100%;
+}
+.end-overlay {
+  position: relative;
+  z-index: 2;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 20px;
+  text-align: center;
+  opacity: 1;
+  transition: opacity 1.2s ease-in;
+}
+.end-overlay.hidden {
+  opacity: 0;
+  pointer-events: none;
+}
+.end-dialog {
+  position: absolute;
+  left: 50%;
+  bottom: 9%;
+  transform: translateX(-50%);
+  width: min(720px, 88%);
+  min-height: 96px;
+  background: #000;
+  border: 4px solid #fff;
+  padding: 22px 26px 18px;
+  box-shadow: 0 0 0 6px #000, 0 0 0 9px #fff;
+  font-family: 'VT323', monospace;
+  font-size: 26px;
+  color: #fff;
+  line-height: 1.4;
+  z-index: 3;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.4s ease-out;
+}
+.end-dialog.active {
+  opacity: 1;
+}
+.end-dialog-text {
+  white-space: pre-wrap;
+}
+.end-dialog .next-arrow {
+  text-align: right;
+  margin-top: 6px;
+}
+.end-title {
+  font-size: clamp(24px, 4vw, 44px);
+  letter-spacing: 4px;
+  text-shadow:
+    2px 2px 0 #ff2244,
+    4px 4px 0 #aa00ff,
+    0 0 24px #ffcc44;
+  animation: float 2s ease-in-out infinite;
+}
+.end-sub {
+  font-family: 'VT323', monospace;
+  font-size: 28px;
+  color: #ffd;
+}
+.end-credit {
+  font-family: 'VT323', monospace;
+  font-size: 20px;
+  color: #aef;
+}
+
+/* responsive */
+@media (max-width: 720px) {
+  .dialog-text { font-size: 20px; }
+  .game-title { font-size: 30px; }
+  .tape-cell { width: 28px; height: 28px; font-size: 12px; }
+}
