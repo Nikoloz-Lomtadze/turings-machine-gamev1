@@ -219,7 +219,6 @@ LEVELS = [
 # happened. The animation function below replays the trace.
 
 def _snapshot(state, tape, head, edge):
-    # tape[:] makes a copy so later edits to `tape` don't mutate this entry
     return {'state': state, 'tape': tape[:], 'head': head, 'edge': edge}
 
 
